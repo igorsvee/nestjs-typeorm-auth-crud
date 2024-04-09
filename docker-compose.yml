@@ -1,0 +1,27 @@
+version: "3"
+
+volumes:
+  # for persistence between restarts
+  postgres_data: {}
+
+services:
+  db:
+    image: postgres:13.1-alpine
+    restart: always
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: tundra
+      POSTGRES_PASSWORD: tundra
+      POSTGRES_DB: tundradb
+
+  db-test:
+    image: postgres:13.1-alpine
+    environment:
+      POSTGRES_USER: tundra
+      POSTGRES_PASSWORD: tundra
+      POSTGRES_DB: tundradb-test
+    ports:
+      - "5433:5432"
