@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -41,7 +41,16 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = this.userRepository.create(createUserDto);
-    return await this.userRepository.save(user);
+    try {
+      return await this.userRepository.save(user);
+    } catch (e) {
+      if (e.code === "23505") {
+        throw new BadRequestException(
+          "Account with this email already exists.",
+        );
+      }
+      throw e;
+    }
   }
 
   async save(user: User) {
